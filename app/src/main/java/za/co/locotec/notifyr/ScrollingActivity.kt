@@ -15,7 +15,10 @@ import za.co.locotec.notifyr.databinding.ActivityScrollingBinding
 import java.lang.Exception
 import java.security.AccessController.getContext
 import android.content.Intent
-
+import android.app.NotificationManager
+import android.content.Context
+import android.widget.ArrayAdapter
+import android.widget.ListView
 
 
 class ScrollingActivity : AppCompatActivity() {
@@ -33,18 +36,23 @@ class ScrollingActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
-        val list = arrayOf<String>(
-            Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE,
-            Manifest.permission.ACCESS_NOTIFICATION_POLICY,
-        )
+        val listView = findViewById<ListView>(R.id.notification_list_view)
+        val adapter = NotificationAdapter(this, arrayListOf(NotificationData("WhatsApp", "tite", "Blah blah blah"),NotificationData("WhatsApp", "tite", "Blah blah blah"),NotificationData("WhatsApp", "tite", "Blah blah blah"),NotificationData("WhatsApp", "tite", "Blah blah blah")))
+        listView.adapter = adapter
 
-        // Initialize a new instance of ManagePermissions class
-        val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-        startActivity(intent)
-        ActivityCompat.requestPermissions(this, list, 1)
+        if (!isNotificationPolicyAccessGranted()) {
+            val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
+            startActivity(intent)
+        }
+
+
 
     }
-
+    private fun isNotificationPolicyAccessGranted(): Boolean {
+        val notificationManager =
+            this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.isNotificationPolicyAccessGranted
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
